@@ -251,6 +251,7 @@ The dashboard will be available at `http://localhost:8000/dashboard`.
 | `SECRET_KEY` | Internal security key | Randomly generated |
 | `RAILWAY_PUBLIC_DOMAIN` | Public Railway domain (auto-set) | `localhost` |
 | `DATA_DIR` | Persistent state directory | `/data` |
+| `PUBLIC_DOMAIN` | Optional canonical custom domain used in generated links | Request/Railway host |
 | `REDIS_URL` | Optional Redis URL for persistent state | Disabled |
 | `CORS_ORIGINS` | Optional comma-separated browser origins | Same-origin only |
 | `MOON_SUPPORT_URL` | Optional support link shown in the UI | `https://github.com` |
@@ -528,6 +529,7 @@ python main.py
 | `SECRET_KEY` | کلید امنیتی داخلی | تولید تصادفی |
 | `RAILWAY_PUBLIC_DOMAIN` | دامنه عمومی Railway (خودکار) | `localhost` |
 | `DATA_DIR` | مسیر ذخیره‌سازی پایدار state | `/data` |
+| `PUBLIC_DOMAIN` | دامنهٔ اختصاصی اختیاری برای لینک‌های تولیدشده | دامنهٔ درخواست/Railway |
 | `REDIS_URL` | آدرس اختیاری Redis برای state پایدار | غیرفعال |
 | `CORS_ORIGINS` | originهای مجاز مرورگر، جداشده با کاما | فقط same-origin |
 | `MOON_SUPPORT_URL` | لینک اختیاری پشتیبانی در رابط کاربری | `https://github.com` |

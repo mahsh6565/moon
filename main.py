@@ -689,9 +689,9 @@ def get_host() -> str:
     if ctx_host:
         return ctx_host
     return (
-        os.environ.get("RENDER_EXTERNAL_HOSTNAME")
+        os.environ.get("PUBLIC_DOMAIN")
+        or os.environ.get("RENDER_EXTERNAL_HOSTNAME")
         or os.environ.get("RAILWAY_PUBLIC_DOMAIN")
-        or os.environ.get("PUBLIC_DOMAIN")
         or CONFIG["host"]
     )
 
