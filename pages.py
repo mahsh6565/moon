@@ -6237,6 +6237,7 @@ html,body{{min-height:100%;background:var(--bg);font-family:var(--serif);color:v
 .top{{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;gap:10px}}
 .brand{{display:flex;align-items:center;gap:11px;min-width:0}}
 .brand-img{{width:40px;height:40px;border-radius:12px;overflow:hidden;border:1px solid var(--card-b);box-shadow:0 0 0 1px rgba(255,255,255,.02);flex-shrink:0}}
+.brand-img.logo-moon{{display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#3B7CF6,#1E4CB8);color:#fff;font-weight:800;font-size:18px}}
 .brand-img img{{width:100%;height:100%;object-fit:cover}}
 .brand-name{{font-size:14.5px;font-weight:800;color:var(--t1);letter-spacing:-.01em}}
 .brand-sub{{font-size:9.5px;color:var(--t3);font-weight:500}}
@@ -6402,7 +6403,7 @@ html,body{{min-height:100%;background:var(--bg);font-family:var(--serif);color:v
 <div class="wrap">
   <div class="top">
     <div class="brand">
-      <div class="brand-img"><img src="https://yt3.googleusercontent.com/vA6bYj1V386YmibpWRNFJtsRRqwfY_U9wnb7gmW90eRVXyNB7gAfjj1XPs5UX0cdKdQprrI=s160-c-k-c0x00ffffff-no-rj" alt="cb"></div>
+      <div class="brand-img logo-moon">M</div>
       <div><div class="brand-name">moon</div><div class="brand-sub">Moon Gateway · v9.2</div></div>
     </div>
     <div class="top-actions">

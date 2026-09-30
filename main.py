@@ -33,6 +33,7 @@ import contextvars
 import json
 import os
 import hashlib
+import re
 import secrets
 import sys
 import time
@@ -41,7 +42,7 @@ import central
 import aiofiles
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
-from urllib.parse import quote
+from urllib.parse import quote, unquote
 from collections import deque, defaultdict
 from pathlib import Path
 import bottokentcpproxy
@@ -75,6 +76,24 @@ logger = logging.getLogger("Moon-Gateway")
 IRAN_TZ = ZoneInfo("Asia/Tehran")
 
 app = FastAPI(title="Moon Gateway", docs_url=None, redoc_url=None)
+
+
+def _sanitize_moon_text(value: str | None) -> str:
+    """Remove legacy RVG/CodeBox branding from user-visible names."""
+    return re.sub(r"(?i)(?:rvg|codeboxo?)", "Moon", str(value or ""))
+
+
+def _sanitize_share_link(link: str | None) -> str:
+    """Keep imported share links functional while replacing legacy URL remarks."""
+    raw = str(link or "").strip()
+    if "#" not in raw:
+        return raw
+    prefix, fragment = raw.rsplit("#", 1)
+    decoded = unquote(fragment)
+    cleaned = _sanitize_moon_text(decoded)
+    if cleaned == decoded:
+        return raw
+    return f"{prefix}#{quote(cleaned, safe='')}"
 
 # وقتی مستقیم با `python main.py` اجرا میشه، این ماژول با نام "__main__" ثبت
 # میشه نه "main". چون protocol/vless/vless.py و protocol/trojan/trojan.py با
@@ -287,6 +306,12 @@ async def load_state():
         if data:
             LINKS.update(data.get("links", {}))
             SUBS.update(data.get("subs", {}))
+            for sub in SUBS.values():
+                if not isinstance(sub, dict):
+                    continue
+                for foreign_link in sub.get("foreign_links", []):
+                    if isinstance(foreign_link, dict) and foreign_link.get("vless_link"):
+                        foreign_link["vless_link"] = _sanitize_share_link(foreign_link["vless_link"])
             NODE_KEYS.update(data.get("node_keys", {}))
             for nid, n in (data.get("nodes") or {}).items():
                 NODES[nid] = _normalize_node(n)
@@ -678,6 +703,7 @@ def now_ir() -> datetime:
     return datetime.now(IRAN_TZ)
 
 def generate_share_link(uuid: str, host: str, remark: str = "Moon", protocol: str = DEFAULT_PROTOCOL) -> str:
+    remark = _sanitize_moon_text(remark) or "Moon"
     link = LINKS.get(uuid) or {}
     alpn = link.get("alpn", "h2")
     fp = link.get("fingerprint", "chrome")
@@ -800,7 +826,7 @@ def build_sub_headers(label: str, used_bytes: int, limit_bytes: int, expires_at:
         except Exception:
             expire_ts = 0
     userinfo = f"upload=0; download={used_bytes}; total={total}; expire={expire_ts}"
-    title_b64 = base64.b64encode(label.encode("utf-8")).decode()
+    title_b64 = base64.b64encode((_sanitize_moon_text(label) or "Moon").encode("utf-8")).decode()
     return {
         "profile-title": f"base64:{title_b64}",
         "subscription-userinfo": userinfo,
@@ -1109,7 +1135,7 @@ async def update_sub(sub_id: str, request: Request, _=Depends(require_auth)):
                 clean.append({
                     "key": str(it.get("key") or "")[:120],
                     "label": str(it.get("label") or "کانفیگ")[:60],
-                    "vless_link": str(it.get("vless_link"))[:2000],
+                    "vless_link": _sanitize_share_link(str(it.get("vless_link"))[:2000]),
                     "used_bytes": int(it.get("used_bytes") or 0),
                     "source": str(it.get("source") or "")[:60],
                 })
@@ -1230,7 +1256,7 @@ async def sub_group_subscription(uuid_key: str, request: Request):
             lb = node_link.get("limit_bytes", 0)
             if lb > 0 and node_link.get("used_bytes", 0) >= lb:
                 continue
-            lines.append(node_link["vless_link"])
+            lines.append(_sanitize_share_link(node_link["vless_link"]))
             total_used += node_link.get("used_bytes", 0)
             total_limit += node_link.get("limit_bytes", 0)
             if node_link.get("expires_at"):
@@ -1239,7 +1265,7 @@ async def sub_group_subscription(uuid_key: str, request: Request):
         vl = fl.get("vless_link")
         if not vl:
             continue
-        lines.append(vl)
+        lines.append(_sanitize_share_link(vl))
         total_used += int(fl.get("used_bytes") or 0)
     nearest_exp = min(expiries) if expiries else None
     content = base64.b64encode("\n".join(lines).encode()).decode()
@@ -2859,7 +2885,7 @@ async def public_sub_data(uuid_key: str, request: Request):
                 "protocol": node_link.get("protocol", DEFAULT_PROTOCOL),
                 "used_bytes": node_link.get("used_bytes", 0),
                 "limit_bytes": node_link.get("limit_bytes", 0),
-                "vless_link": node_link["vless_link"],
+                "vless_link": _sanitize_share_link(node_link["vless_link"]),
             })
 
     # ۲.۶ کانفیگ‌های ایستا (foreign_links) — مثلاً کانفیگ‌های پنل مرکزی که روی
@@ -2876,7 +2902,7 @@ async def public_sub_data(uuid_key: str, request: Request):
             "protocol": fl.get("protocol", DEFAULT_PROTOCOL),
             "used_bytes": fl.get("used_bytes", 0),
             "limit_bytes": 0,
-            "vless_link": vl,
+            "vless_link": _sanitize_share_link(vl),
         })
 
     # ۳. تشخیص کلاینت یا مرورگر
@@ -2885,7 +2911,7 @@ async def public_sub_data(uuid_key: str, request: Request):
 
     if is_client:
         # اگر کلاینت است: فقط لینک‌های فعال را به صورت Base64 برگردان
-        raw_links = "\n".join([l["vless_link"] for l in links_out if l["active"]])
+        raw_links = "\n".join([_sanitize_share_link(l["vless_link"]) for l in links_out if l["active"]])
         encoded_data = base64.b64encode(raw_links.encode("utf-8")).decode("utf-8")
         return Response(content=encoded_data, media_type="text/plain")
 
