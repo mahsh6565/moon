@@ -248,9 +248,10 @@ Reflex Build validate and host the existing dashboard without replacing its
 HTML, API, subscription, or WebSocket routes.
 
 After connecting the repository in `build.reflex.dev`, choose **Pull Latest
-Changes** and publish again. Keep the required `ADMIN_PASSWORD` secret set in
-the Reflex project environment; `PORT` is provided by the host. Open the
-published URL at `/login`.
+Changes** and publish again. Set `ADMIN_PASSWORD` to `123456` for the first
+login (or omit it to use the temporary fallback), then change it immediately
+from the dashboard; `PORT` is provided by the host. Open the published URL at
+`/login`.
 
 <br/>
 
