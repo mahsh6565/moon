@@ -240,6 +240,18 @@ python main.py
 
 The dashboard will be available at `http://localhost:8000/dashboard`.
 
+## 🧩 Reflex Build / Reflex Cloud
+
+Moon is still a FastAPI application, but the repository also includes a small
+Reflex compatibility entry point (`rxconfig.py` and `app/app.py`). This lets
+Reflex Build validate and host the existing dashboard without replacing its
+HTML, API, subscription, or WebSocket routes.
+
+After connecting the repository in `build.reflex.dev`, choose **Pull Latest
+Changes** and publish again. Keep the required `ADMIN_PASSWORD` secret set in
+the Reflex project environment; `PORT` is provided by the host. Open the
+published URL at `/login`.
+
 <br/>
 
 ## ⚙️ Environment Variables
