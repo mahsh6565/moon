@@ -13,7 +13,6 @@ import reflex as rx
 from main import app as moon_fastapi_app
 
 
-@rx.page(route="/__reflex_check", title="Moon Gateway")
 def reflex_check_page():
     """Small compile-time page required by the Reflex toolchain.
 
@@ -25,3 +24,4 @@ def reflex_check_page():
 
 
 app = rx.App(api_transformer=moon_fastapi_app)
+app.add_page(reflex_check_page, route="/__reflex_check", title="Moon Gateway")
