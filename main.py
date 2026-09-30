@@ -450,10 +450,12 @@ SESSION_TTL = 60 * 60 * 24 * 7
 def hash_password(pw: str) -> str:
     return hashlib.sha256(f"{pw}{CONFIG['secret']}".encode()).hexdigest()
 
-ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "").strip()
-if len(ADMIN_PASSWORD) < 12:
+DEFAULT_ADMIN_PASSWORD = "123456"
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", DEFAULT_ADMIN_PASSWORD).strip()
+if ADMIN_PASSWORD != DEFAULT_ADMIN_PASSWORD and len(ADMIN_PASSWORD) < 12:
     raise RuntimeError(
-        "ADMIN_PASSWORD must be set to a value with at least 12 characters before Moon starts."
+        "ADMIN_PASSWORD must be set to a value with at least 12 characters, "
+        "or left unset to use the temporary bootstrap password."
     )
 
 AUTH = {"password_hash": hash_password(ADMIN_PASSWORD)}

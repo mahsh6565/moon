@@ -259,7 +259,7 @@ published URL at `/login`.
 | Variable | Description | Default |
 |---|---|---|
 | `PORT` | Port the service runs on | `8000` |
-| `ADMIN_PASSWORD` | Required dashboard password; use a long random value | **required** |
+| `ADMIN_PASSWORD` | Dashboard password; if omitted, temporary bootstrap password is `123456` | `123456` |
 | `SECRET_KEY` | Internal security key | Randomly generated |
 | `RAILWAY_PUBLIC_DOMAIN` | Public Railway domain (auto-set) | `localhost` |
 | `DATA_DIR` | Persistent state directory | `/data` |
@@ -537,7 +537,7 @@ python main.py
 | متغیر | توضیح | پیش‌فرض |
 |---|---|---|
 | `PORT` | پورت اجرای سرویس | `8000` |
-| `ADMIN_PASSWORD` | رمز ورود پنل؛ یک مقدار طولانی و تصادفی وارد کنید | **الزامی** |
+| `ADMIN_PASSWORD` | رمز ورود پنل؛ در صورت خالی‌بودن، رمز موقت `123456` استفاده می‌شود | `123456` |
 | `SECRET_KEY` | کلید امنیتی داخلی | تولید تصادفی |
 | `RAILWAY_PUBLIC_DOMAIN` | دامنه عمومی Railway (خودکار) | `localhost` |
 | `DATA_DIR` | مسیر ذخیره‌سازی پایدار state | `/data` |
@@ -547,7 +547,8 @@ python main.py
 | `MOON_SUPPORT_URL` | لینک اختیاری پشتیبانی در رابط کاربری | `https://github.com` |
 | `MOON_SUPPORT_LABEL` | عنوان لینک پشتیبانی | `Moon support` |
 
-قبل از اولین اجرا، `ADMIN_PASSWORD` را تنظیم کنید. Moon عمداً رمز پیش‌فرض ناامن نسخهٔ اصلی را قبول نمی‌کند.
+اگر `ADMIN_PASSWORD` تنظیم نشود، Moon برای ورود اولیه از رمز موقت `123456` استفاده می‌کند.
+بعد از اولین ورود، از بخش «تغییر رمز عبور» فوراً یک رمز قوی حداقل ۱۲ کاراکتری انتخاب کنید.
 
 <br/>
 

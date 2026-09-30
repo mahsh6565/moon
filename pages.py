@@ -3331,7 +3331,7 @@ a{color:inherit;text-decoration:none}
         </div>
         <div class="pw-field" style="margin-bottom:6px">
           <label>رمز جدید</label>
-          <input class="pw-input" type="password" id="cp-new" placeholder="حداقل ۴ کاراکتر" oninput="checkPwStrength(this.value)">
+          <input class="pw-input" type="password" id="cp-new" placeholder="حداقل ۱۲ کاراکتر" oninput="checkPwStrength(this.value)">
           <button class="pw-eye" type="button" onclick="togglePwField('cp-new',this)"><i class="ti ti-eye"></i></button>
         </div>
         <div class="pw-strength" id="pw-strength-bar">
@@ -3339,7 +3339,7 @@ a{color:inherit;text-decoration:none}
         </div>
         <div class="pw-strength-label" id="pw-strength-label"><i class="ti ti-shield"></i> قدرت رمز</div>
         <div class="pw-reqs">
-          <span class="pw-req" id="req-len"><i class="ti ti-circle-dashed"></i> حداقل ۴ کاراکتر</span>
+          <span class="pw-req" id="req-len"><i class="ti ti-circle-dashed"></i> حداقل ۱۲ کاراکتر</span>
           <span class="pw-req" id="req-num"><i class="ti ti-circle-dashed"></i> شامل عدد</span>
           <span class="pw-req" id="req-case"><i class="ti ti-circle-dashed"></i> حروف بزرگ/کوچک</span>
         </div>
@@ -4530,7 +4530,7 @@ function refreshAll(){fetchStats();fetchDefaultVless();loadLinks();loadSysRes();
 async function changePw(){
   const cur=document.getElementById('cp-cur').value,nw=document.getElementById('cp-new').value,cf=document.getElementById('cp-cf').value;
   if(!cur||!nw||!cf){toast('همه فیلدها را پر کنید','err');return}
-  if(nw.length<4){toast('حداقل ۴ کاراکتر','err');return}
+  if(nw.length<12){toast('حداقل ۱۲ کاراکتر','err');return}
   if(nw!==cf){toast('تکرار رمز اشتباه','err');return}
   try{
     const r=await authF('/api/change-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({current_password:cur,new_password:nw})});
@@ -4551,7 +4551,7 @@ function checkPwStrength(val){
   const segs=document.querySelectorAll('#pw-strength-bar .pw-strength-seg');
   const label=document.getElementById('pw-strength-label');
   const reqLen=document.getElementById('req-len'),reqNum=document.getElementById('req-num'),reqCase=document.getElementById('req-case');
-  const hasLen=val.length>=4,hasNum=/\d/.test(val),hasCase=/[a-z]/.test(val)&&/[A-Z]/.test(val),hasLong=val.length>=8;
+  const hasLen=val.length>=12,hasNum=/\d/.test(val),hasCase=/[a-z]/.test(val)&&/[A-Z]/.test(val),hasLong=val.length>=16;
   reqLen.classList.toggle('met',hasLen);
   reqNum.classList.toggle('met',hasNum);
   reqCase.classList.toggle('met',hasCase);
