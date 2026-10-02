@@ -451,7 +451,10 @@ def hash_password(pw: str) -> str:
     return hashlib.sha256(f"{pw}{CONFIG['secret']}".encode()).hexdigest()
 
 DEFAULT_ADMIN_PASSWORD = "123456"
-ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", DEFAULT_ADMIN_PASSWORD).strip()
+ADMIN_PASSWORD = (
+    os.environ.get("ADMIN_PASSWORD", DEFAULT_ADMIN_PASSWORD).strip()
+    or DEFAULT_ADMIN_PASSWORD
+)
 if ADMIN_PASSWORD != DEFAULT_ADMIN_PASSWORD and len(ADMIN_PASSWORD) < 12:
     raise RuntimeError(
         "ADMIN_PASSWORD must be set to a value with at least 12 characters, "
