@@ -248,8 +248,15 @@ def _get_or_create_secret() -> str:
         return secrets.token_urlsafe(32)
 
 
+_port_value = os.environ.get("PORT", "").strip()
+try:
+    _port = int(_port_value) if _port_value else 8000
+except ValueError:
+    logger.warning("PORT مقدار معتبر عددی ندارد؛ از پورت پیش‌فرض 8000 استفاده می‌شود.")
+    _port = 8000
+
 CONFIG = {
-    "port": int(os.environ.get("PORT", 8000)),
+    "port": _port,
     "secret": _get_or_create_secret(),
     "host": (
         os.environ.get("RENDER_EXTERNAL_HOSTNAME")
